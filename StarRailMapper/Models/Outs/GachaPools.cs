@@ -1,18 +1,21 @@
-﻿namespace StarRailMapper.Models.Outs
-{
-    internal class GachaPools
-    {
-        public string name;            // 卡池名称
-        public string icon;            // 卡池图标
-        public string type;            // 卡池类型
-        public string start_time;      // 开始时间
-        public string end_time;        // 结束时间
-        public List<string> content_5; // 卡池内容（五星）
-        public List<string> content_4; // 卡池内容（四星）
+﻿namespace StarRailMapper.Core.Models.Outs;
 
-        public static GachaPools SerializeGachaPools(string url)
-        {
-            return new GachaPools();
-        }
+internal class GachaPools : Outs<GachaPools>
+{
+    public readonly string Type; // 卡池类型
+    public readonly string StartTime; // 开始时间
+    public readonly string EndTime; // 结束时间
+    public readonly List<Content> Contents = new(); // 卡池内容
+
+    public static GachaPools SerializeGachaPools(string url)
+    {
+        return new GachaPools();
     }
+}
+
+public class Content
+{
+    public readonly string Name;
+    public readonly string Type;
+    public readonly int Rarity;
 }

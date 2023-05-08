@@ -1,21 +1,20 @@
-﻿namespace StarRailMapper.Models.Outs
-{
-    internal class Relics
-    {
-        public string name;        // 名称
-        public string obtain;      // 获取途径
-        public string description; // 描述
-        public List<Relic> relics; // 内容
+﻿namespace StarRailMapper.Core.Models.Outs;
 
-        public static Relics SerializeRelics(string url)
-        {
-            return new Relics();
-        }
-    }
-    internal class Relic
+internal class Relics : Outs<Relics>
+{
+    public readonly string Obtain; // 获取途径
+    public readonly string Description; // 描述
+    public readonly List<Relic> RelicList = new(); // 内容
+
+    public static Relics SerializeRelics(string url)
     {
-        public string name;        // 名称
-        public string origin;      // 来历
-        public string description; // 描述
+        return new Relics();
     }
+}
+
+public class Relic
+{
+    public readonly string Name; // 名称
+    public readonly string Origin; // 来历
+    public readonly string Description; // 描述
 }
