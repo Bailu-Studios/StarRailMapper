@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Text;
+﻿using System.Text;
 
 namespace StarRailMapper.Core.Helpers;
 public static class Http {
@@ -9,7 +8,7 @@ public static class Http {
     /// <param name="url">请求地址</param>
     /// <param name="result">返回的请求体</param>
     /// <returns>请求状态 (0正常,-1异常)</returns>
-    public static int HttpGet(string url, out string result) {
+    public static int Get(string url, out string result) {
         try {
             var http = new HttpClient();
             var response = http.GetByteArrayAsync(url);
@@ -21,6 +20,29 @@ public static class Http {
             return -1;
         }
     }
+    
+    public static async Task Download(string url, FileInfo file) {
+        try {
+            var http = new HttpClient();
+            var response = await http.GetAsync(url);
+            // var n = response.Content.Headers.ContentLength; // 总长度
+            var stream = await response.Content.ReadAsStreamAsync();
+            await using var fileStream = file.Create();
+            await using (stream) {
+                var buffer = new byte[1024];
+                // var readLength = 0;
+                int length;
+                while ((length = await stream.ReadAsync(buffer, 0, buffer.Length)) != 0) {
+                    // readLength += length;
+                    // Console.WriteLine("下载进度" + (double)readLength / n * 100); // 进度条
+                    // 写入到文件
+                    fileStream.Write(buffer, 0, length);
+                }
+            }
+        } catch (Exception e) {
+            Console.WriteLine(e.Message);
+        }
+    }
 
     /// <summary>
     /// Json POST请求
@@ -29,8 +51,8 @@ public static class Http {
     /// <param name="sendData">要发送的数据</param>
     /// <param name="result">返回的请求体</param>
     /// <returns>请求状态 (0正常,-1异常)</returns>
-    public static int HttpPostJson(string url, string sendData, out string result) {
-        return HttpPost(url, sendData, out result, "application/json");
+    public static int PostJson(string url, string sendData, out string result) {
+        return Post(url, sendData, out result, "application/json");
     }
     
     /// <summary>
@@ -41,7 +63,7 @@ public static class Http {
     /// <param name="result">返回的请求体</param>
     /// <param name="contentType">请求类型, 例"application/json"</param>
     /// <returns>请求状态 (0正常,-1异常)</returns>
-    public static int HttpPost(string url, string sendData, out string result, string contentType = "") {
+    public static int Post(string url, string sendData, out string result, string contentType = "") {
         
         try {
             var http = new HttpClient();
