@@ -1,75 +1,63 @@
 ﻿using System.Net;
 using System.Text;
 
-namespace StarRailMapper.Helpers;
-public static class Http
-{
-    public static int HttpGet(string url, out string reslut)
-    {
-        reslut = "";
-        try
-        {
-            HttpWebRequest wbRequest = (HttpWebRequest)WebRequest.Create(url);
-            wbRequest.Proxy = null;
-            wbRequest.Method = "GET";
-            HttpWebResponse wbResponse = (HttpWebResponse)wbRequest.GetResponse();
-            using (Stream responseStream = wbResponse.GetResponseStream())
-            {
-                using (StreamReader sReader = new StreamReader(responseStream))
-                {
-                    reslut = sReader.ReadToEnd();
-                }
-            }
+namespace StarRailMapper.Core.Helpers;
+public static class Http {
+    /// <summary>
+    /// GET请求
+    /// </summary>
+    /// <param name="url">请求地址</param>
+    /// <param name="result">返回的请求体</param>
+    /// <returns>请求状态 (0正常,-1异常)</returns>
+    public static int HttpGet(string url, out string result) {
+        try {
+            var http = new HttpClient();
+            var response = http.GetByteArrayAsync(url);
+            response.Wait();
+            result = Encoding.UTF8.GetString(response.Result);
+            return 0;
+        } catch (Exception e) {
+            result = e.Message;
+            return -1;
         }
-        catch (Exception e)
-        {
-            reslut = e.Message;     //输出捕获到的异常，用OUT关键字输出
-            return -1;              //出现异常，函数的返回值为-1
-        }
-        return 0;
     }
 
-    public static int HttpPost(string url, string sendData, out string reslut)
-    {
-        reslut = "";
-        try
-        {
-            byte[] data = System.Text.Encoding.UTF8.GetBytes(sendData);
-            HttpWebRequest wbRequest = (HttpWebRequest)WebRequest.Create(url);  // 制备web请求
-            wbRequest.Proxy = null;     //现场测试注释掉也可以上传
-            wbRequest.Method = "POST";
-            wbRequest.ContentType = "application/json";
-            wbRequest.ContentLength = data.Length;
-
-            //#region //【1】获得请求流，OK
-            //Stream newStream = wbRequest.GetRequestStream();
-            //newStream.Write(data, 0, data.Length);
-            //newStream.Close();//关闭流
-            //newStream.Dispose();//释放流所占用的资源
-            //#endregion
-
-            #region //【2】将创建Stream流对象的过程写在using当中，会自动的帮助我们释放流所占用的资源。OK
-            using (Stream wStream = wbRequest.GetRequestStream())         //using(){}作为语句，用于定义一个范围，在此范围的末尾将释放对象。
-            {
-                wStream.Write(data, 0, data.Length);
+    /// <summary>
+    /// Json POST请求
+    /// </summary>
+    /// <param name="url">请求地址</param>
+    /// <param name="sendData">要发送的数据</param>
+    /// <param name="result">返回的请求体</param>
+    /// <returns>请求状态 (0正常,-1异常)</returns>
+    public static int HttpPostJson(string url, string sendData, out string result) {
+        return HttpPost(url, sendData, out result, "application/json");
+    }
+    
+    /// <summary>
+    /// POST请求
+    /// </summary>
+    /// <param name="url">请求地址</param>
+    /// <param name="sendData">要发送的数据</param>
+    /// <param name="result">返回的请求体</param>
+    /// <param name="contentType">请求类型, 例"application/json"</param>
+    /// <returns>请求状态 (0正常,-1异常)</returns>
+    public static int HttpPost(string url, string sendData, out string result, string contentType = "") {
+        
+        try {
+            var http = new HttpClient();
+            var data = Encoding.UTF8.GetBytes(sendData);
+            HttpContent hc = new StreamContent(new MemoryStream(data));
+            if (contentType != "") {
+                hc.Headers.Add("Content-Type", contentType);
             }
-            #endregion
-
-            //获取响应
-            HttpWebResponse wbResponse = (HttpWebResponse)wbRequest.GetResponse();
-            using (Stream responseStream = wbResponse.GetResponseStream())
-            {
-                using (StreamReader sReader = new StreamReader(responseStream, Encoding.UTF8))      //using(){}作为语句，用于定义一个范围，在此范围的末尾将释放对象。
-                {
-                    reslut = sReader.ReadToEnd();
-                }
-            }
+            var response = http.PostAsync(url, hc);
+            var body = response.Result.Content.ReadAsByteArrayAsync();
+            body.Wait();
+            result = Encoding.UTF8.GetString(body.Result);
+            return 0;
+        } catch (Exception e) {
+            result = e.Message;
+            return -1;
         }
-        catch (Exception e)
-        {
-            reslut = e.Message;     //输出捕获到的异常，用OUT关键字输出
-            return -1;              //出现异常，函数的返回值为-1
-        }
-        return 0;
     }
 }

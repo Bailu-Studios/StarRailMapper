@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
-namespace StarRailMapper.Models
+namespace StarRailMapper.Core.Models
 {
     internal class HttpJson
     {
