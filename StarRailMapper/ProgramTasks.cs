@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using StarRailMapper.Core.Constants;
 using StarRailMapper.Core.Helpers;
+using StarRailMapper.Core.Models.Outs;
 
 namespace StarRailMapper.Core;
 
@@ -65,6 +66,6 @@ public abstract class ProgramTasks
 
     public static void Test()
     {
-        Json.FromJson<JObject>("6");
+        Characters.SerializeCharacters(Constants.Constants.InfoPage+"564");
     }
 }

@@ -64,9 +64,14 @@ internal class Characters : Outs<Characters>
             }
         }
 
-        Console.Out.WriteLine(combat);
-        Console.Out.WriteLine(path);
-        Console.Out.WriteLine(rarity);
+        var html = Json.JStr(json["contents"][0]["text"]);
+        var doc = Html.ParseHtml(html);
+        var node = doc.Find("div", ("style", "order: 1;"));
+        for (int i = 0; i < 6; i++)
+        {
+            var attr = node.FindAll("li", ("data-target", "breach.attr"), ("data-index", $"{i}"))[1];
+            Console.Out.WriteLine(attr.OuterHtml);
+        }
         return new Characters(name, icon, rarity, path, combat);
     }
 }
