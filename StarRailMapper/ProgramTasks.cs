@@ -7,7 +7,7 @@ namespace StarRailMapper.Core;
 
 public abstract class ProgramTasks
 {
-    public static Dictionary<string, Dictionary<int, string>> MainMap;
+    public static Dictionary<string, Dictionary<int, string>>? MainMap;
 
     public static Dictionary<string, Dictionary<int, string>> GetMainMap()
     {
@@ -19,7 +19,7 @@ public abstract class ProgramTasks
             var typeName = entry.Value.Name;
             Http.Get(Constants.Constants.ChannelInfo + typeId, out var result);
             var json = Json.FromJson<JObject>(result);
-            foreach (var item in json["data"]["list"][0]["list"])
+            foreach (var item in json!["data"]!["list"]![0]!["list"]!)
             {
                 var itemId = Json.JInt(item["content_id"]);
                 var itemName = Json.JStr(item["title"]);
@@ -36,14 +36,13 @@ public abstract class ProgramTasks
     public static void GetGachaPool()
     {
         var itemsMap = GetMainMap();
-        Console.Out.WriteLine(itemsMap);
         Http.Get(Constants.Constants.GachaInfo, out var result);
         var json = Json.FromJson<JObject>(result);
-        foreach (var pool in json["data"]["list"])
+        foreach (var pool in json!["data"]!["list"]!)
         {
             var charsMap = itemsMap.GetValueOrDefault(TypeEnums.Chars.Name, new());
             var conesMap = itemsMap.GetValueOrDefault(TypeEnums.Cones.Name, new());
-            foreach (var item in pool["pool"])
+            foreach (var item in pool["pool"]!)
             {
                 var id = int.Parse(Json.JStr(item["url"]).Split("/")[6]);
                 if (Json.JStr(pool["title"]) == "流光定影")
@@ -66,7 +65,7 @@ public abstract class ProgramTasks
 
     public static void Test()
     {
-        Characters characters = Characters.SerializeCharacters(Constants.Constants.InfoPage+"564");
-        Console.Out.WriteLine(Json.ToJson(characters));
+        Enemies enemy = Enemies.SerializeEnemies(Constants.Constants.InfoPage+"873");
+        Console.Out.WriteLine(Json.ToJson(enemy));
     }
 }

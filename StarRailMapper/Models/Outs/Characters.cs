@@ -59,7 +59,7 @@ internal class Characters : Outs<Characters>
         }
 
         var html = Json.JStr(json["contents"]![0]!["text"]);
-        File.WriteAllText("./info.html", html);
+        // File.WriteAllText("./info.html", html);
         var doc = Html.ParseHtml(html);
         var node = doc.Find("div", ("style", "order: 1;"));
         Characters character = new Characters(name, icon, rarity, path, combat);

@@ -5,18 +5,41 @@ using StarRailMapper.Core.Models.Outs;
 
 var gachaPools = new List<GachaPools>(); // 卡池
 var characters = new Dictionary<string, Characters>(); // 角色
-var enemies = new List<Enemies>(); // 敌对
-var inventoryItems = new List<InventoryItems>(); // 物品
-var lightCones = new List<LightCones>(); // 光锥
-var relics = new List<Relics>(); // 遗器
+var enemies = new Dictionary<string, Enemies>(); // 敌对
+var inventoryItems = new Dictionary<string, InventoryItems>(); // 物品
+var lightCones = new Dictionary<string, LightCones>(); // 光锥
+var relics = new Dictionary<string, Relics>(); // 遗器
 
 var itemsMap = ProgramTasks.GetMainMap();
 
-Console.Out.WriteLine(Json.ToJson(itemsMap));
 foreach (var id in itemsMap.GetValueOrDefault(TypeEnums.Chars.Name, new()).Keys)
 {
     var character = Characters.SerializeCharacters(Constants.InfoPage + id);
     characters.Add(character.Name, character);
+}
+
+foreach (var id in itemsMap.GetValueOrDefault(TypeEnums.Enemy.Name, new()).Keys)
+{
+    var enemy = Enemies.SerializeEnemies(Constants.InfoPage + id);
+    enemies.Add(enemy.Name, enemy);
+}
+
+foreach (var id in itemsMap.GetValueOrDefault(TypeEnums.Items.Name, new()).Keys)
+{
+    var item = InventoryItems.SerializeInventoryItems(Constants.InfoPage + id);
+    //inventoryItems.Add(item.Name, item);
+}
+
+foreach (var id in itemsMap.GetValueOrDefault(TypeEnums.Relic.Name, new()).Keys)
+{
+    var relic = Relics.SerializeRelics(Constants.InfoPage + id);
+    //relics.Add(relic.Name, relic);
+}
+
+foreach (var id in itemsMap.GetValueOrDefault(TypeEnums.Cones.Name, new()).Keys)
+{
+    var lightCone = LightCones.SerializeLightCones(Constants.InfoPage + id);
+    //lightCones.Add(lightCone.Name, lightCone);
 }
 
 if (args.Length > 0 && args[0] == "output")

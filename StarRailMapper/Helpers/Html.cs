@@ -16,7 +16,7 @@ public class HtmlDocNode
         InnerText = _node.InnerText;
     }
 
-    public HtmlDocNode? Find(string tag, params (string, string)[] attrs)
+    public HtmlDocNode Find(string tag, params (string, string)[] attrs)
     {
         try
         {
@@ -29,9 +29,17 @@ public class HtmlDocNode
                 if (flag) return new HtmlDocNode(node);
             }
         }
-        catch (Exception){}
+        catch (Exception)
+        {
+        }
 
         return new HtmlDocNode(HtmlNode.CreateNode("<a></a>"));
+    }
+
+    public string GetAttributeValue(string key)
+    {
+        if (_node.Attributes.Contains(key)) return _node.Attributes[key].Value;
+        return "";
     }
 
     public List<HtmlDocNode> FindAll(string tag, params (string, string)[] attrs)
