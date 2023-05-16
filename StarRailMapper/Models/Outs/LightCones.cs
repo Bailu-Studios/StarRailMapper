@@ -10,11 +10,10 @@ internal class LightCones : Outs<LightCones>
     public readonly Dictionary<int, List<GrowthItem>> GrowthItems = new(); // 进阶材料
 
     private LightCones(string name, int rarity, string path, string icon, string skill, string description)
+        : base(name, icon)
     {
-        Name = name;
         Rarity = rarity;
         Path = path;
-        Icon = icon;
         Skill = skill;
         Description = description;
     }

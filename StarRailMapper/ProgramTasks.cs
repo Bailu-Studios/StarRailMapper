@@ -66,6 +66,7 @@ public abstract class ProgramTasks
 
     public static void Test()
     {
-        Characters.SerializeCharacters(Constants.Constants.InfoPage+"564");
+        Characters characters = Characters.SerializeCharacters(Constants.Constants.InfoPage+"564");
+        Console.Out.WriteLine(Json.ToJson(characters));
     }
 }

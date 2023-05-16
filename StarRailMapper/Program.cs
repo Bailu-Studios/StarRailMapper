@@ -4,7 +4,7 @@ using StarRailMapper.Core.Helpers;
 using StarRailMapper.Core.Models.Outs;
 
 var gachaPools = new List<GachaPools>(); // 卡池
-var characters = new List<Characters>(); // 角色
+var characters = new Dictionary<string, Characters>(); // 角色
 var enemies = new List<Enemies>(); // 敌对
 var inventoryItems = new List<InventoryItems>(); // 物品
 var lightCones = new List<LightCones>(); // 光锥
@@ -15,7 +15,8 @@ var itemsMap = ProgramTasks.GetMainMap();
 Console.Out.WriteLine(Json.ToJson(itemsMap));
 foreach (var id in itemsMap.GetValueOrDefault(TypeEnums.Chars.Name, new()).Keys)
 {
-    characters.Add(Characters.SerializeCharacters(Constants.InfoPage + id));
+    var character = Characters.SerializeCharacters(Constants.InfoPage + id);
+    characters.Add(character.Name, character);
 }
 
 if (args.Length > 0 && args[0] == "output")

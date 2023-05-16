@@ -370,3 +370,5 @@ FodyWeavers.xsd
 
 #Macbook store file
 .DS_Store
+
+*.html
