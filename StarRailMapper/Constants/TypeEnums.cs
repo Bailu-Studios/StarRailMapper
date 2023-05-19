@@ -10,9 +10,11 @@ public class TypeEnums
     public static readonly TypeEnums Enemy = new(23, "敌对");
     public static readonly TypeEnums Relic = new(30, "遗器");
     public static readonly TypeEnums Items = new(20, "物品");
+
     public static readonly TypeEnums Drain = new(36, "物品");
-    public static readonly TypeEnums Reads = new(31, "物品");
-    public static readonly TypeEnums Tasks = new(53, "物品");
+
+    // public static readonly TypeEnums Reads = new(31, "物品");
+    // public static readonly TypeEnums Tasks = new(53, "物品");
     public static readonly TypeEnums Costs = new(54, "物品");
     public static readonly TypeEnums Other = new(55, "物品");
 

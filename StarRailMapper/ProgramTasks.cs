@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using StarRailMapper.Core.Constants;
 using StarRailMapper.Core.Helpers;
-using StarRailMapper.Core.Models.Outs;
 
 namespace StarRailMapper.Core;
 
@@ -31,41 +30,5 @@ public abstract class ProgramTasks
 
         MainMap = map;
         return map;
-    }
-
-    public static void GetGachaPool()
-    {
-        var itemsMap = GetMainMap();
-        Http.Get(Constants.Constants.GachaInfo, out var result);
-        var json = Json.FromJson<JObject>(result);
-        foreach (var pool in json!["data"]!["list"]!)
-        {
-            var charsMap = itemsMap.GetValueOrDefault(TypeEnums.Chars.Name, new());
-            var conesMap = itemsMap.GetValueOrDefault(TypeEnums.Cones.Name, new());
-            foreach (var item in pool["pool"]!)
-            {
-                var id = int.Parse(Json.JStr(item["url"]).Split("/")[6]);
-                if (Json.JStr(pool["title"]) == "流光定影")
-                {
-                    if (conesMap.ContainsKey(id))
-                        Console.Out.WriteLine(Json.JStr(pool["title"]) + "  " + conesMap.GetValueOrDefault(id, "null"));
-                    else
-                        Console.Out.WriteLine(Json.JStr(pool["title"]) + "  " + charsMap.GetValueOrDefault(id, "null"));
-                }
-                else
-                {
-                    if (conesMap.ContainsKey(id))
-                        Console.Out.WriteLine(Json.JStr(pool["title"]) + "  " + conesMap.GetValueOrDefault(id, "null"));
-                    else
-                        Console.Out.WriteLine(Json.JStr(pool["title"]) + "  " + charsMap.GetValueOrDefault(id, "null"));
-                }
-            }
-        }
-    }
-
-    public static void Test()
-    {
-        Enemies enemy = Enemies.SerializeEnemies(Constants.Constants.InfoPage+"873");
-        Console.Out.WriteLine(Json.ToJson(enemy));
     }
 }

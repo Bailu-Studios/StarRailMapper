@@ -28,12 +28,7 @@ internal class Enemies : Outs<Enemies>
 
     public static Enemies SerializeEnemies(string url)
     {
-        Http.Get(url, out var result);
-        var json = Json.FromJson<JObject>(result)!["data"]!["content"];
-        var name = Json.JStr(json!["title"]);
-        var icon = Json.JStr(json["icon"]);
-        var html = Json.JStr(json["contents"]![0]!["text"]);
-        var doc = Html.ParseHtml(html);
+        var doc = Serialize(url, out string name, out string icon);
         List<string> weakness = new();
         List<string> location = new(); // 发现地点
         List<string> loots = new(); // 掉落

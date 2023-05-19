@@ -26,7 +26,7 @@ public class HtmlDocNode
                 foreach (var (key, value) in attrs)
                     if (!(node.Attributes.Contains(key) && node.Attributes[key].Value == value))
                         flag = false;
-                if (flag) return new HtmlDocNode(node);
+                if (flag) return new HtmlDocNode(HtmlNode.CreateNode(node.OuterHtml));
             }
         }
         catch (Exception)
@@ -57,6 +57,11 @@ public class HtmlDocNode
             }
 
         return list;
+    }
+
+    public void ToFile(string file)
+    {
+        File.WriteAllText(file, OuterHtml);
     }
 }
 

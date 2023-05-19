@@ -23,10 +23,7 @@ internal class Characters : Outs<Characters>
 
     public static Characters SerializeCharacters(string url)
     {
-        Http.Get(url, out var result);
-        var json = Json.FromJson<JObject>(result)!["data"]!["content"];
-        var name = Json.JStr(json!["title"]);
-        var icon = Json.JStr(json["icon"]);
+        var doc = Serialize(url, out string name, out string icon, out JToken json);
         var ext = Json.FromJson<JObject>(Json.JStr(json["ext"]));
         var filter = Json.FromJson<JArray>(Json.JStr(ext!["c_18"]!["filter"]!["text"]));
         int rarity = 4; // 稀有度
@@ -58,9 +55,6 @@ internal class Characters : Outs<Characters>
             }
         }
 
-        var html = Json.JStr(json["contents"]![0]!["text"]);
-        // File.WriteAllText("./info.html", html);
-        var doc = Html.ParseHtml(html);
         var node = doc.Find("div", ("style", "order: 1;"));
         Characters character = new Characters(name, icon, rarity, path, combat);
         // 角色属性
@@ -71,30 +65,30 @@ internal class Characters : Outs<Characters>
             if (i == 0) character.AscendDict.Add(0, attr0);
             else character.AscendDict.Add(i * 10 + 10, attr0);
         }
-
+        node = doc.Find("div", ("style", "order: 2;"));
         // 角色行迹
         for (int i = 0; i < 8; i++)
         {
             var attr = Traces.SerializeTraces(
-                node!.FindAll("li", ("data-target", "skill.attr"), ("data-index", $"{i}")));
+                node.FindAll("li", ("data-target", "skill.attr"), ("data-index", $"{i}")));
             character.TraceList.Add(attr);
         }
 
-        var attrHtml = node!.FindAll("div", ("data-part", "desc"));
+        node = doc.Find("div", ("style", "order: 3;"));
+        var htmlNode = node.Find("div", ("data-part", "desc"));
         // 属性加成
         {
-            var htmlNode = attrHtml[0];
             var htmlNodes = htmlNode.FindAll("tr");
             foreach (var htmlDocNode in htmlNodes)
             {
                 if (htmlDocNode == htmlNodes[0]) continue;
                 var attr = htmlDocNode.FindAll("td");
-                var attrName = attr[0].InnerText.Replace("：","");
+                var attrName = attr[0].InnerText.Replace("：", "");
                 var attrDesc = attr[1].InnerText;
                 var attrDes = attrDesc.Split("提高");
                 var attrUp = attr[2].InnerText;
                 var attribute = new Attribute(attrName, attrDesc, attrDes[0],
-                    double.Parse(attrDes[1].Replace("%", "").Replace("。","")));
+                    double.Parse(attrDes[1].Replace("%", "").Replace("。", "")));
                 foreach (var s in Regex.Split(attrUp, "，|、"))
                 {
                     var attrUps = s.Split("*");
@@ -104,9 +98,10 @@ internal class Characters : Outs<Characters>
                 character.AttributeList.Add(attribute);
             }
         }
+        node = doc.Find("div", ("style", "order: 4;"));
+        htmlNode = node.Find("div", ("data-part", "desc"));
         // 星魂
         {
-            var htmlNode = attrHtml[1];
             var htmlNodes = htmlNode.FindAll("tr");
             foreach (var htmlDocNode in htmlNodes)
             {
@@ -154,7 +149,7 @@ public class Ascend // 角色属性
             {
                 string name = nodes[0].InnerText;
                 if (name == "晋阶材料" || name == "") continue;
-                int value = (int)double.Parse(nodes[1].Find("span")!.InnerText.Replace("%",""));
+                int value = (int)double.Parse(nodes[1].Find("span")!.InnerText.Replace("%", ""));
                 if (name == "晋阶前生命值") hp = value;
                 if (name == "晋阶前攻击力") atk = value;
                 if (name == "晋阶前防御力") def = value;
@@ -184,7 +179,7 @@ public class Ascend // 角色属性
         {
             if (htmlDocNode.InnerText == "  ") continue;
             string itemName = htmlDocNode.Find("span", ("class", "obc-tmpl__icon-text"))!.InnerText;
-            if(itemName=="无")continue;
+            if (itemName == "无") continue;
             int itemCount =
                 int.Parse(htmlDocNode.Find("span", ("class", "obc-tmpl__icon-num"))!.InnerText.Replace("*", ""));
             ascend.GrowthItems.TryAdd(itemName, itemCount);
@@ -251,7 +246,8 @@ public class Traces // 角色行迹
                             if (htmlNodes[j].InnerText == "未确认") continue;
                             if (j % 2 == 0)
                             {
-                                if(htmlNodes.Count>=j+2) text += $"{htmlNodes[j].InnerText}{htmlNodes[j + 1].InnerText}|";
+                                if (htmlNodes.Count >= j + 2)
+                                    text += $"{htmlNodes[j].InnerText}{htmlNodes[j + 1].InnerText}|";
                             }
                         }
 
